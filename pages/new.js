@@ -1,6 +1,6 @@
 import Form from '../components/Form'
 
-const NewPet = () => {
+const New = () => {
   const petForm = {
     name: '',
     owner_name: '',
@@ -16,4 +16,4 @@ const NewPet = () => {
   return <Form formId="add-pet-form" petForm={petForm} />
 }
 
-export default NewPet
+export default New

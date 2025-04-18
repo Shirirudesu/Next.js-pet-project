@@ -2,18 +2,43 @@ import '../css/style.css'
 import '../css/form.css'
 import Head from 'next/head'
 import Link from 'next/link'
+import { SessionProvider } from "next-auth/react"
+import '../css/globals.css'
+import Navbar from '../components/NavBar'
+import { useState, useEffect } from 'react'
 
-function MyApp({ Component, pageProps }) {
+
+function MyApp({ Component,   pageProps: { session, ...pageProps },
+}) {
+const [credits, setCredits] =  useState(0)
+
+
+
+  // const getData = async () => {
+  //   const res = await fetch(`/api/user/${session?.user?.email}`, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  //   console.log(await res.json())
+  // }
+
+
   return (
-    <>
+    <SessionProvider session={session}>
       <Head>
         <title>Pet Care App</title>
       </Head>
 
+      
       <div className="top-bar">
         <div className="nav">
           <Link href="/">Home</Link>
           <Link href="/new">Add Pet</Link>
+          <Link href="/create">Buy credits</Link>
+          
+          <Navbar credits={credits} setCredits={setCredits}/>
         </div>
 
         <img
@@ -25,7 +50,7 @@ function MyApp({ Component, pageProps }) {
       <div className="grid wrapper">
         <Component {...pageProps} />
       </div>
-    </>
+      </SessionProvider>
   )
 }
 

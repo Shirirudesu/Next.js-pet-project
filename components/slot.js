@@ -1,0 +1,94 @@
+import { useState } from 'react'
+
+const symbols = ['🍒', '🍊', '🍉', '🍇', '🍓', '⭐']
+
+export default function SlotMachine() {
+  const [credits, setCredits] = useState(100)
+  const [bet, setBet] = useState(5)
+  const [message, setMessage] = useState('')
+  const [isSpinning, setIsSpinning] = useState(false)
+  const [reels, setReels] = useState(['❓', '❓', '❓'])
+
+  const handlePlay = () => {
+    if (credits < bet || isSpinning) {
+      setMessage('Not enough credits!')
+      return
+    }
+
+    setIsSpinning(true)
+    setMessage('Spinning...')
+    setReels(['🔄', '🔄', '🔄'])
+
+    setTimeout(() => {
+      const newReels = Array(3)
+        .fill(null)
+        .map(() => symbols[Math.floor(Math.random() * symbols.length)])
+      setReels(newReels)
+
+      const win = newReels.every((symbol) => symbol === newReels[0])
+      let newCredits = credits - bet
+
+      if (win) {
+        const winnings = bet * 5
+        newCredits += winnings
+        setMessage(`🎉 Jackpot! You won ${winnings} credits!`)
+      } else {
+        setMessage(`💸 Lost ${bet} credits`)
+      }
+
+      setCredits(newCredits)
+      setIsSpinning(false)
+    }, 1500)
+  }
+
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-600 to-indigo-600 p-4">
+      <div className="bg-gray-900 text-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-6">
+        <h2 className="text-3xl font-bold text-center tracking-wide">🎰 Slot Machine</h2>
+
+        <p className="text-center text-lg">
+          Balance: <span className="font-semibold">{credits}</span> credits
+        </p>
+
+        <div className="flex justify-center gap-3">
+          {[5, 10, 15].map((amount) => (
+            <button
+              key={amount}
+              onClick={() => setBet(amount)}
+              className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${
+                bet === amount
+                  ? 'bg-yellow-400 text-black shadow-md'
+                  : 'bg-gray-700 hover:bg-gray-600'
+              }`}
+            >
+              Bet {amount}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex justify-center items-center gap-3 bg-gray-800 p-4 rounded-xl">
+          {reels.map((symbol, idx) => (
+            <div
+              key={idx}
+              className="w-16 h-16 bg-black text-3xl flex items-center justify-center rounded-lg border-2 border-gray-600"
+            >
+              {symbol}
+            </div>
+          ))}
+        </div>
+
+        <button
+          onClick={handlePlay}
+          disabled={isSpinning}
+          className="w-full py-3 rounded-full font-bold bg-green-500 hover:bg-green-600 disabled:opacity-50 transition"
+        >
+          Spin  
+        </button>
+
+        {message && (
+          <p className="text-center mt-2 text-sm text-yellow-300">{message}</p>
+        )}
+      </div>
+    </div>
+  )
+}

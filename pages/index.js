@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import dbConnect from '../lib/dbConnect'
 import Pet from '../models/Pet'
-
+import UserInfo from '../components/UserInfo'
 const Index = ({ pets }) => (
   <>
-    {/* Create a card for each pet */}
+    <div className="grid place-items-center h-screen -mt-24">
+      <UserInfo />
+    </div>
     {pets.map((pet) => (
       <div key={pet._id}>
         <div className="card">
