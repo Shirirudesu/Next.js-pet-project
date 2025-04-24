@@ -6,7 +6,7 @@ export default async function handler(req, res) {
       const { name, email } = req.body;
       console.log("Hi 222")
       await connectMongoDB();
-      const resdb = await User.create({ name, email });
+      const resdb = await User.create({ name, email, roleId: 0 });
       console.log(resdb)
       return res.status(201).json({ message: "User Registered" });
     } catch (error) {

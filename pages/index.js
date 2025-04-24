@@ -65,5 +65,3 @@ export async function getServerSideProps() {
 }
 
 export default Index
-
-console.log(name)
