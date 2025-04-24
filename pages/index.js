@@ -2,10 +2,10 @@ import Link from 'next/link'
 import dbConnect from '../lib/dbConnect'
 import Pet from '../models/Pet'
 import UserInfo from '../components/UserInfo'
-const Index = ({ pets }) => (
+const Index = ({pets, credits}) => (
   <>
     <div className="grid place-items-center h-screen -mt-24">
-      <UserInfo />
+      <UserInfo credits={credits} />
     </div>
     {pets.map((pet) => (
       <div key={pet._id}>
@@ -65,3 +65,5 @@ export async function getServerSideProps() {
 }
 
 export default Index
+
+console.log(name)

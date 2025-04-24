@@ -6,7 +6,7 @@ import Image from "next/image";
 import SignInBtn from "./SignInBtn";
 import { useSession } from "next-auth/react";
 
-export default function UserInfo() {
+export default function UserInfo(props) {
   const { status, data: session } = useSession();
 
   if (status === "authenticated") {
@@ -28,7 +28,7 @@ export default function UserInfo() {
           Role: <span className="font-bold">{} </span>
         </div>
         <div>
-          Credits: <span className="font-bold">{} </span>
+          Credits: <span className="font-bold"> {props.credits} </span>
         </div>
       </div>
     );

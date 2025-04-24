@@ -1,45 +1,49 @@
 import { useState } from 'react'
+import { useSession } from "next-auth/react";
 
-const symbols = ['🍒', '🍊', '🍉', '🍇', '🍓', '⭐']
+export default function SlotMachine(props) {
 
-export default function SlotMachine() {
-  const [credits, setCredits] = useState(100)
   const [bet, setBet] = useState(5)
   const [message, setMessage] = useState('')
   const [isSpinning, setIsSpinning] = useState(false)
   const [reels, setReels] = useState(['❓', '❓', '❓'])
+  const { status, data: session } = useSession();
 
-  const handlePlay = () => {
-    if (credits < bet || isSpinning) {
-      setMessage('Not enough credits!')
-      return
-    }
-
-    setIsSpinning(true)
-    setMessage('Spinning...')
-    setReels(['🔄', '🔄', '🔄'])
-
-    setTimeout(() => {
-      const newReels = Array(3)
-        .fill(null)
-        .map(() => symbols[Math.floor(Math.random() * symbols.length)])
-      setReels(newReels)
-
-      const win = newReels.every((symbol) => symbol === newReels[0])
-      let newCredits = credits - bet
-
-      if (win) {
-        const winnings = bet * 5
-        newCredits += winnings
-        setMessage(`🎉 Jackpot! You won ${winnings} credits!`)
-      } else {
-        setMessage(`💸 Lost ${bet} credits`)
+  const getData = async () => {
+    if(status === "authenticated") {
+      if (props.credits < bet || isSpinning) {
+        setMessage('Not enough credits!')
+        return
       }
+      setIsSpinning(true)
+      setMessage('Spinning...')
+      setReels(['🔄', '🔄', '🔄'])
 
-      setCredits(newCredits)
-      setIsSpinning(false)
-    }, 1500)
+
+    const res = await fetch(`/api/slot`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body:JSON.stringify({
+        email: session?.user?.email,
+        bet: bet
+      })
+    });
+    const resJson = await res.json()
+
+    setReels(resJson.result.newReels)
+    console.log(res.json)
+    if (resJson.result.win) {
+      setMessage(`🎉 Jackpot! You won ${resJson.winningAmount} credits!`)
+    } else {
+      setMessage(`💸 Lost ${bet} credits`)
+    }
+    setIsSpinning(false)
+    props.setCredits(resJson.credits)
   }
+}
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-600 to-indigo-600 p-4">
@@ -47,7 +51,7 @@ export default function SlotMachine() {
         <h2 className="text-3xl font-bold text-center tracking-wide">🎰 Slot Machine</h2>
 
         <p className="text-center text-lg">
-          Balance: <span className="font-semibold">{credits}</span> credits
+          Balance: <span className="font-semibold">{props.credits}</span> credits
         </p>
 
         <div className="flex justify-center gap-3">
@@ -78,7 +82,7 @@ export default function SlotMachine() {
         </div>
 
         <button
-          onClick={handlePlay}
+          onClick={getData}
           disabled={isSpinning}
           className="w-full py-3 rounded-full font-bold bg-green-500 hover:bg-green-600 disabled:opacity-50 transition"
         >

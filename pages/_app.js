@@ -48,7 +48,7 @@ const [credits, setCredits] =  useState(0)
         ></img>
       </div>
       <div className="grid wrapper">
-        <Component {...pageProps} />
+        <Component {...pageProps} credits={credits} setCredits={setCredits} />
       </div>
       </SessionProvider>
   )
