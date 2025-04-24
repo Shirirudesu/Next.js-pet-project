@@ -7,49 +7,44 @@ import { useEffect } from "react";
 
 export default function Navbar(props) {
   const { status, data: session } = useSession();
-
-
   const getData = async () => {
-    if(status === "authenticated") {
-    const res = await fetch(`/api/user/${session?.user?.email}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const resJson = await res.json()
-    console.log(resJson.data.credits)
-    props.setCredits(resJson.data.credits)
-  }
+    if (status === "authenticated") {
+      const res = await fetch(`/api/user/${session?.user?.email}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const resJson = await res.json();
+      props.setCredits(resJson.data.credits);
+    }
+  };
 
-  }
-
-useEffect(()=> {
-  // console.log(session)
-  // setTimeout(() => {getData(session )}, 5000)
- getData()
-},[status])
+  useEffect(() => {
+    getData();
+    //works at start and everytime status changes
+  }, [status]);
 
   return (
-    < >
+    <>
       {status === "authenticated" ? (
         <>
-        <a>Balance: {props.credits} credits</a> 
-        <button
-          onClick={() => signOut()}
-          style={{
-            margin: "24px",
-            cursor: "pointer",
-            cursor: "pointer",
-            backgroundColor: "black",
-            padding: "12px 24px",
-            borderRadius: "8px",
-            color: "white",
-          }}
-          className="bg-slate-900 text-white px-6 py-2 rounded-md"
-        >
-          Sign Out
-        </button>
+          <a>Balance: {props.credits} credits</a>
+          <button
+            onClick={() => signOut()}
+            style={{
+              margin: "24px",
+              cursor: "pointer",
+              cursor: "pointer",
+              backgroundColor: "black",
+              padding: "12px 24px",
+              borderRadius: "8px",
+              color: "white",
+            }}
+            className="bg-slate-900 text-white px-6 py-2 rounded-md"
+          >
+            Sign Out
+          </button>
         </>
       ) : (
         <button

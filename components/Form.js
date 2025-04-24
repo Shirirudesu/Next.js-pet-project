@@ -20,7 +20,6 @@ const Form = ({ formId, petForm, forNewPet = true }) => {
     dislikes: petForm.dislikes,
   })
 
-  /* The PUT method edits an existing entry in the mongodb database. */
   const putData = async (form) => {
     const { id } = router.query
 
@@ -34,21 +33,19 @@ const Form = ({ formId, petForm, forNewPet = true }) => {
         body: JSON.stringify(form),
       })
 
-      // Throw error with status code in case Fetch API req failed
       if (!res.ok) {
         throw new Error(res.status)
       }
 
       const { data } = await res.json()
 
-      mutate(`/api/pets/${id}`, data, false) // Update the local data without a revalidation
+      mutate(`/api/pets/${id}`, data, false)
       router.push('/')
     } catch (error) {
       setMessage('Failed to update pet')
     }
   }
 
-  /* The POST method adds a new entry in the mongodb database. */
   const postData = async (form) => {
     try {
       const res = await fetch('/api/pets', {
@@ -60,7 +57,6 @@ const Form = ({ formId, petForm, forNewPet = true }) => {
         body: JSON.stringify(form),
       })
 
-      // Throw error with status code in case Fetch API req failed
       if (!res.ok) {
         throw new Error(res.status)
       }
@@ -82,8 +78,6 @@ const Form = ({ formId, petForm, forNewPet = true }) => {
       [name]: value,
     })
   }
-
-  /* Makes sure pet info is filled for pet name, owner name, species, and image url*/
   const formValidate = () => {
     let err = {}
     if (!form.name) err.name = 'Name is required'

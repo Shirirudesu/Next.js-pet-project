@@ -37,10 +37,8 @@ export async function POST(req) {
     });
   }
 
-  // Списываем ставку
   user.credits -= betAmount;
 
-  // Рандомный шанс на победу (например, 40%)
   const win = Math.random() < 0.4;
 
   if (win) {
