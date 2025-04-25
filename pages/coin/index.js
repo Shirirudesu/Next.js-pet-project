@@ -8,7 +8,7 @@ export default function CoinFlip({ credits, setCredits }) {
   const [flipping, setFlipping] = useState(false);
   const [side, setSide] = useState(null);
   const [message, setMessage] = useState("");
-
+  const [playerChoice, setPlayerChoice] = useState(null);
   const [bet, setBet] = useState(10);
 
   const handleFlip = async () => {
@@ -23,6 +23,7 @@ export default function CoinFlip({ credits, setCredits }) {
     setFlipping(true);
     setMessage("Throuing up a coin...");
     setSide(null);
+    setPlayerChoice(null);
     //initiating and resests
     try {
       const res = await fetch("/api/coin", {
@@ -39,11 +40,12 @@ export default function CoinFlip({ credits, setCredits }) {
       if (res.ok) {
         setSide(data.result);
         setCredits(data.credits);
-        setMessage(
-          data.win
-            ? `🎉 You guessed it right! You won ${bet * 2} credits!`
-            : `💸 You guessed wrong... Lost ${bet} credits`
-        );
+
+        if (data.result === playerChoice) {
+          setMessage(`🎉 You guessed it right! You won ${bet * 2} credits!`);
+        } else {
+          setMessage(`💸 You guessed wrong... Lost ${bet} credits`);
+        }
       } else {
         setMessage(data.error || "Error!");
       }
@@ -55,10 +57,20 @@ export default function CoinFlip({ credits, setCredits }) {
     }
   };
 
+  const handleChoice = (choice) => {
+    setPlayerChoice(choice);
+    setMessage("");
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-teal-100 to-blue-600 p-6">
       <div className="bg-white text-gray-800 rounded-3xl shadow-2xl w-[500px] min-h-[500px] p-8 space-y-6">
         <h2 className="text-3xl font-bold text-center">Coin Flip</h2>
+
+        <p className="text-center text-lg">
+          Balance: <span className="font-semibold">{credits}</span> credits
+        </p>
+
         <div
           style={{
             display: "grid",
@@ -69,7 +81,7 @@ export default function CoinFlip({ credits, setCredits }) {
           {numArr.map((i) => (
             <button
               style={{
-                backgroundColor: "blue",
+                backgroundColor: "RoyalBlue",
                 borderRadius: 25,
                 color: "white",
               }}
@@ -80,9 +92,32 @@ export default function CoinFlip({ credits, setCredits }) {
           ))}
         </div>
 
-        <p className="text-center text-lg">
-          Balance: <span className="font-semibold">{credits}</span> credits
-        </p>
+        {!flipping && (
+          <div className="flex justify-center gap-8">
+            <button
+              onClick={() => handleChoice("heads")}
+              className={`py-2 px-6 rounded-full font-bold transition-all duration-200 transform 
+                ${
+                  playerChoice === "heads"
+                    ? "bg-blue-500 scale-105 shadow-md text-white"
+                    : "bg-blue-200 hover:bg-blue-300 text-gray-800"
+                }`}
+            >
+              Heads
+            </button>
+            <button
+              onClick={() => handleChoice("tails")}
+              className={`py-2 px-6 rounded-full font-bold transition-all duration-200 transform 
+                ${
+                  playerChoice === "tails"
+                    ? "bg-blue-500 scale-105 shadow-md text-white"
+                    : "bg-blue-200 hover:bg-blue-300 text-gray-800"
+                }`}
+            >
+              Tails
+            </button>
+          </div>
+        )}
 
         <div
           style={{
@@ -98,6 +133,7 @@ export default function CoinFlip({ credits, setCredits }) {
             style={{
               width: "100%",
               height: "100%",
+              marginTop: 20,
               transition: "transform 1s",
               transform: flipping ? "rotateY(720deg)" : "none",
               borderRadius: "9999px",
@@ -106,14 +142,15 @@ export default function CoinFlip({ credits, setCredits }) {
           />
         </div>
 
-        <button
-          onClick={handleFlip}
-          disabled={flipping}
-          className="w-full py-3 rounded-full font-bold bg-blue-500 hover:bg-blue-600 disabled:opacity-50 transition"
-        >
-          {flipping ? "Flipping..." : `Play for ${bet} credits`}
-        </button>
-
+        {playerChoice && (
+          <button
+            onClick={handleFlip}
+            disabled={flipping}
+            className="w-full py-3 text-white rounded-full font-bold bg-blue-500 hover:bg-blue-600 disabled:opacity-50 transition"
+          >
+            {flipping ? "Flipping..." : `Play for ${bet} credits`}
+          </button>
+        )}
         {message && (
           <p className="text-center mt-2 text-sm text-blue-800">{message}</p>
         )}

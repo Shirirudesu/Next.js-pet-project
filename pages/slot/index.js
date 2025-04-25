@@ -44,10 +44,7 @@ export default function SlotMachine(props) {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-600 to-indigo-600 p-4">
-      <div className="bg-gray-900 text-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-6">
-        {/* <h2 className="text-3xl font-bold text-center tracking-wide">
-          🎰 Slot Machine
-        </h2> */}
+      <div className="bg-gray-900 text-white rounded-2xl shadow-2xl w-[550px] min-h-[420px] p-6 space-y-6">
         <SlotMachineTitle />
 
         <p className="text-center text-lg">
