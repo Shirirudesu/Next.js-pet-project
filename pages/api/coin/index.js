@@ -4,7 +4,7 @@ import User from "../../../models/User";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
-      const { email, bet } = req.body;
+      const { email, bet, choice } = req.body;
 
       if (!email || !bet) {
         return res.status(400).json({ error: "Email and bet are required" });

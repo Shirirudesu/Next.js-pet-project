@@ -16,6 +16,7 @@ export default function Navbar(props) {
         },
       });
       const resJson = await res.json();
+      props.setBoughtItems(resJson.data.unlockedArticles);
       props.setCredits(resJson.data.credits);
     }
   };

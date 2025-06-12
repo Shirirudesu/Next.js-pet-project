@@ -1,9 +1,9 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
 const ArticleSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   date: {
     type: Date,
@@ -15,14 +15,17 @@ const ArticleSchema = new mongoose.Schema({
   },
   author: {
     type: String,
-    reqired: true,
+    required: true,
   },
   likes: {
     type: Number,
+    default: 0,
   },
   dislikes: {
     type: Number,
+    default: 0,
   },
-})
+});
 
-export default mongoose.models.Article || mongoose.model('Article', ArticleSchema)
+export default mongoose.models.Article ||
+  mongoose.model("Article", ArticleSchema);

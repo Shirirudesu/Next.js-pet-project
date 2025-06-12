@@ -23,8 +23,7 @@ export default function CoinFlip({ credits, setCredits }) {
     setFlipping(true);
     setMessage("Throuing up a coin...");
     setSide(null);
-    setPlayerChoice(null);
-    //initiating and resests
+
     try {
       const res = await fetch("/api/coin", {
         method: "POST",

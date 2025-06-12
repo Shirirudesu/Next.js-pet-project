@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   const [credits, setCredits] = useState(0);
+  const [boughtItems, setBoughtItems] = useState([]);
 
   // const getData = async () => {
   //   const res = await fetch(`/api/user/${session?.user?.email}`, {
@@ -33,8 +34,14 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           <Link href="/create">Buy credits</Link>
           <Link href="/slot">Slot Machine</Link>
           <Link href="/coin">Coin Flip</Link>
+          <Link href="/articles">View Articles</Link>
+          <Link href="/scraper">Scrape Website</Link>
 
-          <Navbar credits={credits} setCredits={setCredits} />
+          <Navbar
+            credits={credits}
+            setCredits={setCredits}
+            setBoughtItems={setBoughtItems}
+          />
         </div>
 
         <img
@@ -45,7 +52,13 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         ></img>
       </div>
       <div className="grid wrapper">
-        <Component {...pageProps} credits={credits} setCredits={setCredits} />
+        <Component
+          {...pageProps}
+          credits={credits}
+          setCredits={setCredits}
+          boughtItems={boughtItems}
+          setBoughtItems={setBoughtItems}
+        />
       </div>
     </SessionProvider>
   );

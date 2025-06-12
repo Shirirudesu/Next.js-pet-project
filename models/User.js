@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    unlockedArticles: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );
