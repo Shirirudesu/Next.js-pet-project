@@ -5,16 +5,18 @@ const symbols = ["🍒", "🍊", "🍉", "🍇", "🍓", "⭐", "7️⃣", "💎
 
 const play = (bet) => {
   const getSymbol = () => {
-    if ((bet = 15)) {
+    if (bet === 200) {
+      return Math.random() < 0.02
+        ? "💎"
+        : symbols[Math.floor(Math.random() * (symbols.length - 1))];
+    } else if (bet === 50) {
       return Math.random() < 0.05
         ? "⭐"
         : symbols[Math.floor(Math.random() * (symbols.length - 1))];
-    } else if ((bet = 10)) {
-      return Math.random() < 0.02
-        ? "🍇"
-        : symbols[Math.floor(Math.random() * (symbols.length - 1))];
     } else {
-      return symbols[Math.floor(Math.random() * symbols.length)];
+      return Math.random() < 0.1
+        ? "🍒"
+        : symbols[Math.floor(Math.random() * symbols.length)];
     }
   };
 
@@ -26,21 +28,22 @@ const play = (bet) => {
 
   if (a === b && b === c) {
     win = true;
+
     switch (a) {
       case "7️⃣":
-        winningAmount = bet * 100;
+        winningAmount = bet * 120;
         break;
       case "💎":
-        winningAmount = bet * 50;
+        winningAmount = bet * 80;
         break;
       case "⭐":
-        winningAmount = bet * 25;
+        winningAmount = bet * 40;
         break;
       case "🍇":
-        winningAmount = bet * 15;
+        winningAmount = bet * 20;
         break;
       case "🍓":
-        winningAmount = bet * 10;
+        winningAmount = bet * 12;
         break;
       case "🍉":
         winningAmount = bet * 8;
@@ -64,26 +67,52 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
       const { email, bet } = req.body;
+
       await connectMongoDB();
-      const resdb = await User.findOne({ email });
-      const result = play();
+
+      // const resdb = await User.findOne({ email });
+
+      const result = play(bet);
       if (result.win) {
         const totalWin = bet + result.winningAmount;
-        const ant = await User.updateOne(
-          { email: email },
-          { $inc: { credits: totalWin } }
+
+        const updatedUser = await User.findOneAndUpdate(
+          { email },
+          { $inc: { credits: totalWin } },
+          { new: true },
         );
+
+        // const ant = await User.updateOne(
+        //   { email: email },
+        //   { $inc: { credits: totalWin } },
+        // );
+
+        // return res.status(201).json({
+        //   credits: resdb.credits + totalWin,
+        //   result,
+        //   winningAmount: result.winningAmount,
+        // });
+
         return res.status(201).json({
-          credits: resdb.credits + totalWin,
+          credits: updatedUser.credits,
           result,
           winningAmount: result.winningAmount,
         });
       } else {
-        const ant = await User.updateOne(
-          { email: email },
-          { $inc: { credits: -bet } }
+        const updatedUser = await User.findOneAndUpdate(
+          { email },
+          { $inc: { credits: -bet } },
+          { new: true },
         );
-        return res.status(201).json({ credits: resdb.credits - bet, result });
+        // const ant = await User.updateOne(
+        //   { email: email },
+        //   { $inc: { credits: -bet } },
+        // );
+        // return res.status(201).json({ credits: resdb.credits - bet, result });
+        return res.status(201).json({
+          credits: updatedUser.credits,
+          result,
+        });
       }
     } catch (error) {
       console.log(error);

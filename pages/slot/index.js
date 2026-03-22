@@ -31,9 +31,9 @@ export default function SlotMachine(props) {
       const resJson = await res.json();
 
       setReels(resJson.result.newReels);
-      console.log(res.json);
+
       if (resJson.result.win) {
-        setMessage(`🎉 Jackpot! You won ${resJson.winningAmount} credits!`);
+        setMessage(`🎉 You won ${resJson.winningAmount} credits!`);
       } else {
         setMessage(`💸 Lost ${bet} credits`);
       }
@@ -53,7 +53,7 @@ export default function SlotMachine(props) {
         </p>
 
         <div className="flex justify-center gap-3">
-          {[5, 10, 15].map((amount) => (
+          {[5, 50, 200].map((amount) => (
             <button
               key={amount}
               onClick={() => setBet(amount)}

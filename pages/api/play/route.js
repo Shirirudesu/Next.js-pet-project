@@ -17,7 +17,7 @@ export async function POST(req) {
   const betAmount = Number(body.betAmount);
 
   // Проверка допустимой ставки
-  if (![5, 10, 15].includes(betAmount)) {
+  if (![5, 50, 200].includes(betAmount)) {
     return new Response(JSON.stringify({ error: "Invalid bet amount" }), {
       status: 400,
     });
@@ -55,6 +55,6 @@ export async function POST(req) {
         ? `You won! +${betAmount * 2} credits`
         : `You lost! -${betAmount} credits`,
     }),
-    { status: 200 }
+    { status: 200 },
   );
 }

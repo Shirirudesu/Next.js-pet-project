@@ -4,7 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { SessionProvider } from "next-auth/react";
 import "../css/globals.css";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {

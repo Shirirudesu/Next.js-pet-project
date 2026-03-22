@@ -72,6 +72,10 @@ export default function ScraperPage(props) {
             <strong>Text (first paragraph):</strong> {data.text || "—"}
           </p>
 
+          {data.publishDate && (
+            <p className="text-gray-600 mt-2">Published: {data.publishDate}</p>
+          )}
+
           {data.img && (
             <img
               src={data.img.startsWith("http") ? data.img : `https:${data.img}`}
@@ -79,6 +83,7 @@ export default function ScraperPage(props) {
               className="mt-2 max-w-full rounded"
             />
           )}
+
           {data.links?.length > 0 && (
             <ul className="list-disc ml-6 mt-4">
               {data.links.slice(0, 10).map((link, idx) => (

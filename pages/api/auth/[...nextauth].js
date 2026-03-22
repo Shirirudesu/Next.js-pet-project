@@ -4,54 +4,54 @@ import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 
 const authOptions = {
-    providers: [
-      GoogleProvider({
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      }),
-    ],
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+  ],
 
-    callbacks: {
-      async signIn({ user, account }) {
-        if (account.provider === "google") {
-          const { name, email } = user;
-          try {
-            await connectMongoDB();
-            const userExists = await User.findOne({ email });
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account.provider === "google") {
+        const { name, email } = user;
+        try {
+          await connectMongoDB();
+          const userExists = await User.findOne({ email });
 
-            if (!userExists) {
-              console.log("bye")
-              const res = await fetch("http://localhost:3000/api/user", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  name,
-                  email,
-                }),
-              });
-  
-              if (res.ok) {
-                return user; 
-              }
+          if (!userExists) {
+            console.log("bye");
+            const res = await fetch("http://localhost:3000/api/user", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                name,
+                email,
+              }),
+            });
+
+            if (res.ok) {
+              return user;
             }
-            console.log(userExists)
-            return userExists
-          } catch (error) {
-            console.log("Error during signIn:", error);
           }
+          console.log(userExists);
+          // return userExists;
+          return user;
+        } catch (error) {
+          console.log("Error during signIn:", error);
         }
-        return user; 
-      },
+      }
+      return user;
     },
-    pages: {
-      signIn: "/auth/signin", 
-    },
-  };
-  
-  const handler = NextAuth(authOptions);
-  
+  },
+  pages: {
+    signIn: "/auth/signin",
+  },
+};
 
-  export default NextAuth(authOptions);
-  export { handler as GET, handler as POST };
+const handler = NextAuth(authOptions);
+
+export default NextAuth(authOptions);
+export { handler as GET, handler as POST };

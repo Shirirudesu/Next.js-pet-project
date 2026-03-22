@@ -21,7 +21,7 @@ export default function CoinFlip({ credits, setCredits }) {
     //Check stuff
 
     setFlipping(true);
-    setMessage("Throuing up a coin...");
+    setMessage("Throwing  up a coin...");
     setSide(null);
 
     try {
@@ -40,7 +40,7 @@ export default function CoinFlip({ credits, setCredits }) {
         setSide(data.result);
         setCredits(data.credits);
 
-        if (data.result === playerChoice) {
+        if (data.win) {
           setMessage(`🎉 You guessed it right! You won ${bet * 2} credits!`);
         } else {
           setMessage(`💸 You guessed wrong... Lost ${bet} credits`);
@@ -79,6 +79,7 @@ export default function CoinFlip({ credits, setCredits }) {
         >
           {numArr.map((i) => (
             <button
+              key={i}
               style={{
                 backgroundColor: "RoyalBlue",
                 borderRadius: 25,
