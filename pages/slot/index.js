@@ -1,17 +1,29 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import SlotMachineTitle from "../../components/SlotMachineTitle";
+
+import BetSelector from "../../components/slot/BetSelector";
+import SlotReels from "../../components/slot/SlotReels";
+import SpinButton from "../../components/slot/SpinButton";
+import SlotMessage from "../../components/slot/SlotMessage";
+// import SlotMachine from "../../components/slot/SlotMachine";
+
 export default function SlotMachine(props) {
   const [bet, setBet] = useState(5);
   const [message, setMessage] = useState("");
   const [isSpinning, setIsSpinning] = useState(false);
   const [reels, setReels] = useState(["❓", "❓", "❓"]);
+
   const { status, data: session } = useSession();
 
   const getData = async () => {
-    if (status === "authenticated") {
+    if (status !== "authenticated") {
+      setMessage("Login required");
+      return;
+    }
+    {
       if (props.credits < bet || isSpinning) {
         setMessage("Not enough credits!");
+        setIsSpinning(false);
         return;
       }
       setIsSpinning(true);
@@ -32,10 +44,10 @@ export default function SlotMachine(props) {
 
       setReels(resJson.result.newReels);
 
-      if (resJson.result.win) {
-        setMessage(`🎉 You won ${resJson.winningAmount} credits!`);
+      if (resJson.win) {
+        setMessage(`You won +${resJson.winAmount}`);
       } else {
-        setMessage(`💸 Lost ${bet} credits`);
+        setMessage(`You lost -${bet}`);
       }
       setIsSpinning(false);
       props.setCredits(resJson.credits);
@@ -43,53 +55,27 @@ export default function SlotMachine(props) {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-600 to-indigo-600 p-4">
-      <div className="bg-gray-900 text-white rounded-2xl shadow-2xl w-[550px] min-h-[420px] p-6 space-y-6">
-        <SlotMachineTitle />
+    <div className="min-h-screen bg-zinc-800 px-6 py-12">
+      <div className="max-w-md mx-auto">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+          <div className="mb-8">
+            <h2 className="text-3xl font-semibold tracking-tight text-white">
+              Slot Machine
+            </h2>
 
-        <p className="text-center text-lg">
-          Balance: <span className="font-semibold">{props.credits}</span>{" "}
-          credits
-        </p>
+            <p className="text-zinc-400 mt-2">
+              Current balance:
+              <span className="text-white font-medium ml-2">
+                {props.credits} credits
+              </span>
+            </p>
+          </div>
 
-        <div className="flex justify-center gap-3">
-          {[5, 50, 200].map((amount) => (
-            <button
-              key={amount}
-              onClick={() => setBet(amount)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${
-                bet === amount
-                  ? "bg-yellow-400 text-black shadow-md"
-                  : "bg-gray-700 hover:bg-gray-600"
-              }`}
-            >
-              Bet {amount}
-            </button>
-          ))}
+          <BetSelector bet={bet} setBet={setBet} />
+          <SlotReels reels={reels} />
+          <SpinButton onClick={getData} isSpinning={isSpinning} bet={bet} />
+          <SlotMessage message={message} />
         </div>
-
-        <div className="flex justify-center items-center gap-3 bg-gray-800 p-4 rounded-xl">
-          {reels.map((symbol, idx) => (
-            <div
-              key={idx}
-              className="w-16 h-16 bg-black text-3xl flex items-center justify-center rounded-lg border-2 border-gray-600"
-            >
-              {symbol}
-            </div>
-          ))}
-        </div>
-
-        <button
-          onClick={getData}
-          disabled={isSpinning}
-          className="w-full py-3 rounded-full font-bold bg-green-500 hover:bg-green-600 disabled:opacity-50 transition"
-        >
-          Spin
-        </button>
-
-        {message && (
-          <p className="text-center mt-2 text-sm text-yellow-300">{message}</p>
-        )}
       </div>
     </div>
   );

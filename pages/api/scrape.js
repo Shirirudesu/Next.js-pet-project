@@ -6,13 +6,13 @@ import { connectMongoDB } from "../../lib/mongodb";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Метод не поддерживается" });
+    return res.status(405).json({ error: "Method is not supported" });
   }
 
   const { url, email } = req.body;
 
   if (!url) {
-    return res.status(400).json({ error: "URL не указан" });
+    return res.status(400).json({ error: "URL is not defined" });
   }
 
   try {
@@ -69,6 +69,6 @@ export default async function handler(req, res) {
     // );
     res.status(200).json({ title, img, text, links, publishDate });
   } catch (error) {
-    res.status(500).json({ error: "Ошибка при скрейпинге" });
+    res.status(500).json({ error: "Error during scraping" });
   }
 }

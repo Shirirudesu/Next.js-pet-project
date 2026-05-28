@@ -24,14 +24,13 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <SessionProvider session={session}>
       <Head>
-        <title>Pet Care App</title>
+        <title>Pet App</title>
       </Head>
 
       <div className="top-bar">
         <div className="nav">
           <Link href="/">Home</Link>
-          <Link href="/new">Add Pet</Link>
-          <Link href="/create">Buy credits</Link>
+          <Link href="/buy">Buy credits</Link>
           <Link href="/slot">Slot Machine</Link>
           <Link href="/coin">Coin Flip</Link>
           <Link href="/articles">View Articles</Link>

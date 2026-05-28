@@ -18,7 +18,7 @@ const Test1 = () => {
   return (
     <>
       <h1 className="text-2xl font-bold mb-4">Diary</h1>
-      <div>TEXT</div>
+
       <CKEditorWrapper onSave={handleSave} />
       <div style={{ marginTop: "24px" }}>
         {entries.length === 0 && <p>Записей пока нет.</p>}

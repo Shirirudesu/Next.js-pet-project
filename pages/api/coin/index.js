@@ -1,48 +1,44 @@
 import { connectMongoDB } from "../../../lib/mongodb";
 import User from "../../../models/User";
+import { playCoinFlip } from "../../../lib/games/coinflip";
 
 export default async function handler(req, res) {
-  if (req.method === "POST") {
-    try {
-      const { email, bet, choice } = req.body;
+  if (req.method !== "POST") {
+    return res.status(405).end();
+  }
 
-      if (!email || !bet) {
-        return res.status(400).json({ error: "Email and bet are required" });
-      }
+  try {
+    const { email, bet } = req.body;
 
-      await connectMongoDB();
-
-      const user = await User.findOne({ email });
-
-      if (!user || user.credits < bet) {
-        return res
-          .status(400)
-          .json({ error: "Not enough credits or user not found" });
-      }
-      //0 < 0.5  == true
-      //1 < 0.5 == false
-
-      const win = Math.random() < 0.5; // true or false
-      const result = win ? "heads" : "tails";
-
-      const creditChange = win ? bet * 2 : -bet;
-
-      await User.updateOne(
-        { email: email },
-        { $inc: { credits: creditChange } }
-      );
-
-      return res.status(200).json({
-        result,
-        win,
-        credits: user.credits + creditChange,
-      });
-    } catch (err) {
-      console.error("Coin flip API error:", err);
-      return res.status(500).json({ error: "Internal Server Error" });
+    if (!email || !bet) {
+      return res.status(400).json({ error: "Missing data" });
     }
-  } else {
-    res.setHeader("Allow", ["POST"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+
+    await connectMongoDB();
+
+    const user = await User.findOne({ email });
+
+    if (!user || user.credits < bet) {
+      return res.status(400).json({
+        error: "Not enough credits",
+      });
+    }
+
+    const game = playCoinFlip(bet, req.body.choice);
+
+    const updatedUser = await User.findOneAndUpdate(
+      { email },
+      { $inc: { credits: game.creditChange } },
+      { new: true },
+    );
+
+    return res.status(200).json({
+      result: game.result,
+      win: game.win,
+      credits: updatedUser.credits,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ error: "Server error" });
   }
 }
