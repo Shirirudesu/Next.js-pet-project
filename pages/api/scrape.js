@@ -1,4 +1,3 @@
-// pages/api/scrape.js
 import { load } from "cheerio";
 import User from "../../models/User";
 import ScraperCache from "../../models/ScraperCache";
@@ -61,12 +60,7 @@ export default async function handler(req, res) {
 
     user.credits -= 5;
     await user.save();
-    //const user = await User.findOne({ email: email });  НЕ НАДО
 
-    // const ant = await User.updateOne(
-    //   { email: email },
-    //   { $inc: { credits: -5 } },
-    // );
     res.status(200).json({ title, img, text, links, publishDate });
   } catch (error) {
     res.status(500).json({ error: "Error during scraping" });

@@ -50,53 +50,40 @@ export default function Checkout() {
   };
   return (
     <div className="min-h-screen bg-zinc-100 py-12 px-6">
-      {" "}
       <div className="max-w-5xl mx-auto">
-        {" "}
         <div className="mb-10">
-          {" "}
           <h1 className="text-4xl font-semibold text-zinc-900 tracking-tight">
-            {" "}
-            Buy Credits{" "}
-          </h1>{" "}
+            Buy Credits
+          </h1>
           <p className="text-zinc-500 mt-2">
-            {" "}
-            Choose the amount of credits you want to purchase{" "}
-          </p>{" "}
-        </div>{" "}
+            Choose the amount of credits you want to purchase
+          </p>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {" "}
           {products.map((product) => (
             <div
               key={product.id}
               className="bg-white border border-zinc-200 rounded-2xl p-6 transition hover:border-zinc-300"
             >
-              {" "}
               <div className="flex justify-center mb-5">
-                {" "}
                 <img
                   src={`/${product.image}`}
                   alt={product.name}
                   className="w-20 h-20 rounded-xl object-cover"
-                />{" "}
-              </div>{" "}
+                />
+              </div>
               <div className="space-y-2">
-                {" "}
                 <h2 className="text-xl font-medium text-zinc-900">
-                  {" "}
-                  {product.name}{" "}
-                </h2>{" "}
+                  {product.name}
+                </h2>
                 <p className="text-sm text-zinc-500">
-                  {" "}
-                  ${product.price} per credit{" "}
-                </p>{" "}
-              </div>{" "}
+                  ${product.price} per credit
+                </p>
+              </div>
               <div className="mt-6">
-                {" "}
                 <label className="block text-sm text-zinc-600 mb-2">
-                  {" "}
-                  Quantity{" "}
-                </label>{" "}
+                  Quantity
+                </label>
                 <input
                   type="number"
                   min="1"
@@ -105,27 +92,24 @@ export default function Checkout() {
                     handleQuantityChange(product.id, e.target.value)
                   }
                   className="w-full h-11 px-4 rounded-xl border border-zinc-300 bg-white outline-none focus:border-zinc-500"
-                />{" "}
-              </div>{" "}
+                />
+              </div>
               <div className="mt-5 flex items-center justify-between">
-                {" "}
-                <span className="text-sm text-zinc-500"> Total </span>{" "}
+                <span className="text-sm text-zinc-500"> Total </span>
                 <span className="text-xl font-semibold text-zinc-900">
-                  {" "}
-                  ${calculatePrice(product.id)}{" "}
-                </span>{" "}
-              </div>{" "}
+                  ${calculatePrice(product.id)}
+                </span>
+              </div>
               <button
                 onClick={() => handleCheckout(product.id)}
                 className="w-full mt-6 h-11 rounded-xl bg-zinc-900 text-white font-medium transition hover:bg-zinc-800"
               >
-                {" "}
-                Continue{" "}
-              </button>{" "}
+                Continue
+              </button>
             </div>
-          ))}{" "}
-        </div>{" "}
-      </div>{" "}
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
