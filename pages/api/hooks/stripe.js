@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import User from "../../../models/User";
 import { buffer } from "micro";
+import dbConnect from "../../../lib/dbConnect";
 export const config = {
   api: {
     bodyParser: false,
@@ -34,6 +35,7 @@ export default async function handler(req, res) {
       case "checkout.session.completed":
         const obj = event.data.object;
         const theUser = obj.customer_email;
+        await dbConnect();
 
         const products = [
           { name: "50 Credits", amount: 50 },

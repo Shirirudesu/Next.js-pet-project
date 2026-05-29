@@ -1,4 +1,4 @@
-import { connectMongoDB } from "../../../lib/mongodb";
+import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 import Article from "../../../models/Article";
 
@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     try {
       const { email } = req.body;
       const unlockId = req.query.id;
-      await connectMongoDB();
+      await dbConnect();
 
       const user = await User.findOne({ email });
       if (!user) return res.status(404).json({ error: "User is not found" });
@@ -69,6 +69,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "Article ID is required" });
       }
 
+      await dbConnect();
       const deleted = await Article.findByIdAndDelete(articleId);
       if (!deleted) {
         return res.status(404).json({ error: "Article not found" });

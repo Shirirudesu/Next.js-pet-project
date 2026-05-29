@@ -1,4 +1,4 @@
-import { connectMongoDB } from "../../../lib/mongodb";
+import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 import { playSlot } from "../../../lib/games/slot.js";
 
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   try {
     const { email, bet } = req.body;
 
-    await connectMongoDB();
+    await dbConnect();
 
     const result = playSlot(bet);
 

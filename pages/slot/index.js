@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { useUser } from "../../context/UserContext";
 
 import BetSelector from "../../components/slot/BetSelector";
 import SlotReels from "../../components/slot/SlotReels";
@@ -14,6 +15,7 @@ export default function SlotMachine(props) {
   const [reels, setReels] = useState(["❓", "❓", "❓"]);
 
   const { status, data: session } = useSession();
+  const { credits, setCreditsLocal } = useUser();
 
   const getData = async () => {
     if (status !== "authenticated") {
@@ -21,7 +23,7 @@ export default function SlotMachine(props) {
       return;
     }
     {
-      if (props.credits < bet || isSpinning) {
+      if (credits < bet || isSpinning) {
         setMessage("Not enough credits!");
         setIsSpinning(false);
         return;
@@ -50,7 +52,7 @@ export default function SlotMachine(props) {
         setMessage(`You lost -${bet}`);
       }
       setIsSpinning(false);
-      props.setCredits(resJson.credits);
+      setCreditsLocal(resJson.credits);
     }
   };
 
@@ -66,7 +68,7 @@ export default function SlotMachine(props) {
             <p className="text-zinc-400 mt-2">
               Current balance:
               <span className="text-white font-medium ml-2">
-                {props.credits} credits
+                {credits} credits
               </span>
             </p>
           </div>

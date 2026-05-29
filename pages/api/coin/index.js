@@ -1,4 +1,4 @@
-import { connectMongoDB } from "../../../lib/mongodb";
+import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 import { playCoinFlip } from "../../../lib/games/coinflip";
 
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing data" });
     }
 
-    await connectMongoDB();
+    await dbConnect();
 
     const user = await User.findOne({ email });
 

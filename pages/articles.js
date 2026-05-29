@@ -3,15 +3,12 @@ import dbConnect from "../lib/dbConnect";
 import Article from "../models/Article";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { useUser } from "../context/UserContext";
 
-const ArticlesPage = ({
-  articles,
-  setCredits,
-  boughtItems,
-  credits,
-  setBoughtItems,
-}) => {
+const ArticlesPage = ({ articles }) => {
   const { status, data: session } = useSession();
+  const { credits, unlockedArticles, addUnlockedArticleLocal, setCreditsLocal } =
+    useUser();
   const [fetchedArticles, setFetchedArticles] = useState(articles);
   const unlockArticle = async (id) => {
     const res = await fetch(`/api/articles/${id}`, {
@@ -23,8 +20,12 @@ const ArticlesPage = ({
     });
     const data = await res.json();
     if (data.success) {
-      setBoughtItems((prevState) => [...prevState, id]);
-      setCredits((prev) => prev - 10);
+      addUnlockedArticleLocal(id);
+      if (typeof data.newCredits === "number") {
+        setCreditsLocal(data.newCredits);
+      } else {
+        setCreditsLocal(Math.max(0, credits - 10));
+      }
     } else {
       alert(data.error || "Error");
     }
@@ -66,7 +67,7 @@ const ArticlesPage = ({
             <p className="text-sm text-gray-500 mb-4">
               📅 {new Date(article.date).toLocaleDateString()}
             </p>
-            {boughtItems.includes(article._id) ? (
+            {unlockedArticles.includes(article._id) ? (
               <>
                 <p className="mb-4">{article.body.slice(0, 200)}...</p>
                 <div className="flex flex-wrap gap-3">
@@ -96,11 +97,11 @@ const ArticlesPage = ({
             ) : (
               <p className="mb-4 text-gray-500 italic">
                 This article is locked. Unlock to view. (Please buy
-                article😭🥺🥺🥺🥺)
+                article😭🥺🥺)
               </p>
             )}
 
-            {boughtItems.includes(article._id) ? (
+            {unlockedArticles.includes(article._id) ? (
               <div></div>
             ) : (
               <button

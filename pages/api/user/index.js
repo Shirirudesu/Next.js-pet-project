@@ -1,10 +1,10 @@
-import { connectMongoDB } from "../../../lib/mongodb";
+import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
       const { name, email } = req.body;
-      await connectMongoDB();
+      await dbConnect();
       const resdb = await User.create({ name, email, roleId: 0 });
       return res.status(201).json({ message: "User Registered" });
     } catch (error) {

@@ -1,4 +1,4 @@
-import { connectMongoDB } from "../../../lib/mongodb";
+import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
@@ -16,25 +16,11 @@ const authOptions = {
       if (account.provider === "google") {
         const { name, email } = user;
         try {
-          await connectMongoDB();
+          await dbConnect();
           const userExists = await User.findOne({ email });
 
           if (!userExists) {
-            console.log("bye");
-            const res = await fetch("http://localhost:3000/api/user", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                name,
-                email,
-              }),
-            });
-
-            if (res.ok) {
-              return user;
-            }
+            await User.create({ name, email, roleId: 0 });
           }
           console.log(userExists);
           // return userExists;

@@ -5,60 +5,38 @@ import Link from "next/link";
 import { SessionProvider } from "next-auth/react";
 import "../css/globals.css";
 import Navbar from "../components/Navbar";
-import { useState, useEffect } from "react";
+import { UserProvider } from "../context/UserContext";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
-  const [credits, setCredits] = useState(0);
-  const [boughtItems, setBoughtItems] = useState([]);
-
-  // const getData = async () => {
-  //   const res = await fetch(`/api/user/${session?.user?.email}`, {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  //   console.log(await res.json())
-  // }
-
   return (
     <SessionProvider session={session}>
-      <Head>
-        <title>Pet App</title>
-      </Head>
+      <UserProvider>
+        <Head>
+          <title>Pet App</title>
+        </Head>
 
-      <div className="top-bar">
-        <div className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/buy">Buy credits</Link>
-          <Link href="/slot">Slot Machine</Link>
-          <Link href="/coin">Coin Flip</Link>
-          <Link href="/articles">View Articles</Link>
-          <Link href="/scraper">Scrape Website</Link>
+        <div className="top-bar">
+          <div className="nav">
+            <Link href="/">Home</Link>
+            <Link href="/buy">Buy credits</Link>
+            <Link href="/slot">Slot Machine</Link>
+            <Link href="/coin">Coin Flip</Link>
+            <Link href="/articles">View Articles</Link>
+            <Link href="/scraper">Scrape Website</Link>
+            <Link href="/profile">Profile</Link>
+            <Navbar />
+          </div>
 
-          <Navbar
-            credits={credits}
-            setCredits={setCredits}
-            setBoughtItems={setBoughtItems}
-          />
+          <img
+            id="title"
+            src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Pet_logo_with_flowers.png"
+            alt="pet care logo"
+          ></img>
         </div>
-
-        <img
-          id="title"
-          src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Pet_logo_with_flowers.png"
-          alt="pet care logo"
-          onClick={() => setText(`Number:${Math.random()}`)}
-        ></img>
-      </div>
-      <div className="grid wrapper">
-        <Component
-          {...pageProps}
-          credits={credits}
-          setCredits={setCredits}
-          boughtItems={boughtItems}
-          setBoughtItems={setBoughtItems}
-        />
-      </div>
+        <div className="grid wrapper">
+          <Component {...pageProps} />
+        </div>
+      </UserProvider>
     </SessionProvider>
   );
 }

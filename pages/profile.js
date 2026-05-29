@@ -1,14 +1,13 @@
-"use client";
-
 import { SessionProvider } from "next-auth/react";
 import Image from "next/image";
-import SignInBtn from "./SignInBtn";
 import { useSession } from "next-auth/react";
 import { useUser } from "../context/UserContext";
 
-export default function UserInfo(props) {
+export default function UserProfile(props) {
   const { status, data: session } = useSession();
-  const { credits, roleId } = useUser();
+  const { credits, user, isLoading } = useUser();
+  const ROLES = { 0: "Admin", 1: "User", 2: "Writer" };
+  console.log(user);
 
   if (status === "authenticated") {
     return (
@@ -25,15 +24,18 @@ export default function UserInfo(props) {
         <div>
           Email: <span className="font-bold">{session?.user?.email}</span>
         </div>
+
         <div>
-          Role: <span className="font-bold">{roleId} </span>
+          Role:{" "}
+          <span className="font-bold">{ROLES[user?.roleId] ?? "Unknown"} </span>
         </div>
+
         <div>
           Credits: <span className="font-bold"> {credits} </span>
         </div>
       </div>
     );
   } else {
-    return <SignInBtn />;
+    return "Hello";
   }
 }

@@ -3,34 +3,24 @@
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect } from "react";
+import { useUser } from "../context/UserContext";
 // import axios from 'axios'
 
 export default function Navbar(props) {
   const { status, data: session } = useSession();
-  const getData = async () => {
-    if (status === "authenticated") {
-      const res = await fetch(`/api/user/${session?.user?.email}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const resJson = await res.json();
-      props.setBoughtItems(resJson.data.unlockedArticles);
-      props.setCredits(resJson.data.credits);
-    }
-  };
+  const { credits, refreshUser } = useUser();
 
   useEffect(() => {
-    getData();
-    //works at start and everytime status changes
+    if (status === "authenticated") {
+      refreshUser();
+    }
   }, [status]);
 
   return (
     <>
       {status === "authenticated" ? (
         <>
-          <a>Balance: {props.credits} credits</a>
+          <a>Balance: {credits} credits</a>
           <button
             onClick={() => signOut()}
             style={{

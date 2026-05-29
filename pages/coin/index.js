@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { useUser } from "../../context/UserContext";
 
 import CoinBetSelector from "../../components/coinflip/CoinBetSelector";
 import CoinChoice from "../../components/coinflip/CoinChoice";
@@ -7,8 +8,9 @@ import CoinButton from "../../components/coinflip/CoinButton";
 import CoinAnimation from "../../components/coinflip/CoinAnimation";
 import CoinMessage from "../../components/coinflip/CoinMessage";
 
-export default function CoinFlip({ credits, setCredits }) {
+export default function CoinFlip() {
   const { data: session, status } = useSession();
+  const { credits, setCreditsLocal } = useUser();
 
   const [flipping, setFlipping] = useState(false);
   const [side, setSide] = useState(null);
@@ -20,6 +22,7 @@ export default function CoinFlip({ credits, setCredits }) {
     if (status !== "authenticated") return;
     if (flipping) return;
     if (credits < bet) return;
+    if (!playerChoice) return;
 
     setFlipping(true);
     setMessage("Flipping...");
@@ -31,13 +34,16 @@ export default function CoinFlip({ credits, setCredits }) {
       body: JSON.stringify({
         email: session.user.email,
         bet,
+        choice: playerChoice,
       }),
     });
 
     const data = await res.json();
 
     setSide(data.result);
-    setCredits(data.credits);
+    if (typeof data.credits === "number") {
+      setCreditsLocal(data.credits);
+    }
 
     if (data.win) {
       setMessage(`Win +${bet}`);

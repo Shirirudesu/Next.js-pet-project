@@ -1,4 +1,4 @@
-import { connectMongoDB } from "../../../lib/mongodb";
+import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/User";
 
 export default async function handler(req, res) {
@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     method,
   } = req;
 
-  await connectMongoDB();
+  await dbConnect();
 
   switch (method) {
     case "GET":

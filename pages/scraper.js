@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { useUser } from "../context/UserContext";
 
-export default function ScraperPage(props) {
+export default function ScraperPage() {
   const [url, setUrl] = useState("");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const { data: session, status } = useSession();
+  const { credits, setCreditsLocal } = useUser();
 
   const handleScrape = async () => {
-    if (props.credits < 5) {
+    if (credits < 5) {
       alert("Not enough credits to scrape. Need at least 5.");
       return;
     }
-
-    props.setCredits(props.credits - 5);
 
     setLoading(true);
     setData(null);
@@ -26,6 +26,9 @@ export default function ScraperPage(props) {
       });
       const result = await res.json();
       setData(result);
+      if (typeof result?.credits === "number") {
+        setCreditsLocal(result.credits);
+      }
     } catch (err) {
       console.error("Ошибка при парсинге:", err);
     } finally {
@@ -38,7 +41,7 @@ export default function ScraperPage(props) {
       <h1 className="text-2xl font-bold mb-4">Web Scraper</h1>
 
       <p className="text-center text-lg">
-        Balance: <span className="font-semibold">{props.credits}</span> credits
+        Balance: <span className="font-semibold">{credits}</span> credits
       </p>
       <br></br>
 
@@ -52,12 +55,12 @@ export default function ScraperPage(props) {
       <button
         onClick={handleScrape}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        disabled={loading || props.credits < 5}
+        disabled={loading || credits < 5}
       >
         {loading ? "Loading..." : "Scraping"}
       </button>
 
-      {props.credits < 5 && (
+      {credits < 5 && (
         <p className="text-red-600 mt-2 font-medium">
           Not enough credits to scrape. Minimum required: 5.
         </p>

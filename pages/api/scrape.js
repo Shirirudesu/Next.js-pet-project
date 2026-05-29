@@ -1,7 +1,7 @@
 import { load } from "cheerio";
 import User from "../../models/User";
 import ScraperCache from "../../models/ScraperCache";
-import { connectMongoDB } from "../../lib/mongodb";
+import dbConnect from "../../lib/dbConnect";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    await connectMongoDB();
+    await dbConnect();
 
     let cached = await ScraperCache.findOne({ url });
 
@@ -61,7 +61,14 @@ export default async function handler(req, res) {
     user.credits -= 5;
     await user.save();
 
-    res.status(200).json({ title, img, text, links, publishDate });
+    res.status(200).json({
+      title,
+      img,
+      text,
+      links,
+      publishDate,
+      credits: user.credits,
+    });
   } catch (error) {
     res.status(500).json({ error: "Error during scraping" });
   }
